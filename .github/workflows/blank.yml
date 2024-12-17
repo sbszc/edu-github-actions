@@ -15,7 +15,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all history to ensure HEAD^ is available
+          fetch-depth: 0 
 
       - name: Get changed OpenAPI files
         id: changed_files
@@ -47,6 +47,7 @@ jobs:
             --name $CONTAINER_NAME \
             --account-name $AZURE_STORAGE_ACCOUNT \
             --public-access blob
+            --auth-mode login
 
           # Upload each changed file to the container, overwriting if necessary.
           for file in ${{ steps.changed_files.outputs.files }}; do
@@ -57,6 +58,7 @@ jobs:
               --file "$file" \
               --name "$file" \
               --overwrite true
+              --auth-mode login
           done
 
           echo "Upload completed."
