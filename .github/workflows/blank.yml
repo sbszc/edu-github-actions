@@ -1,0 +1,72 @@
+name: Upload OpenAPI Files on Merge to v10
+
+on:
+  push:
+    branches:
+      - 'v*'
+    paths:
+      - 'openapi/**/*.yml'
+      - 'openapi/**/*.yaml'
+
+jobs:
+  upload_openapi_to_azure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Get changed OpenAPI files
+        id: changed_files
+        run: |
+          # This command looks at the diff between HEAD and the last commit on v*.
+          # If there are new/modified .yaml files, capture them.
+          CHANGED_YAML=$(git diff --name-only HEAD^ HEAD | grep -E '\.ya?ml$' || true)
+          
+          echo "Changed YAML files:"
+          echo "$CHANGED_YAML"
+
+          # Save these files to a GitHub Actions output variable if any are present.
+          echo "files=$CHANGED_YAML" >> $GITHUB_OUTPUT
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Upload to Azure Blob Storage
+        if: ${{ steps.changed_files.outputs.files != '' }}
+        run: |
+          # Configure your container name and storage account name:
+          AZURE_STORAGE_ACCOUNT="uscoldtestopenapi"
+          CONTAINER_NAME="api-docs"
+
+          # Make sure the container exists with public read (blob) access:
+          az storage container create \
+            --name $CONTAINER_NAME \
+            --account-name $AZURE_STORAGE_ACCOUNT \
+            --public-access blob
+
+          # Upload each changed file to the container, overwriting if necessary.
+          for file in ${{ steps.changed_files.outputs.files }}; do
+            echo "Uploading $file to blob container..."
+            az storage blob upload \
+              --account-name $AZURE_STORAGE_ACCOUNT \
+              --container-name $CONTAINER_NAME \
+              --file "$file" \
+              --name "$file" \
+              --overwrite true
+          done
+
+          echo "Upload completed."
+
+      - name: Show public URL(s)
+        if: ${{ steps.changed_files.outputs.files != '' }}
+        run: |
+          # Print out the public URLs for each file
+          AZURE_STORAGE_ACCOUNT="myStorageAccountName"
+          CONTAINER_NAME="public-openapi"
+
+          for file in ${{ steps.changed_files.outputs.files }}; do
+            PUBLIC_URL="https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${CONTAINER_NAME}/${file}"
+            echo "Public URL for $file -> $PUBLIC_URL"
+          done
