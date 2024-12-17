@@ -1,6 +1,6 @@
 openapi: 3.1.1
 info:
-  title: YMS Integration API
+  title: YMS Integration API updated
   description: API for integration with Phenix's Yard Management System
   version: 1.0.0
   contact:
