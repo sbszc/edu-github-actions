@@ -1,4 +1,4 @@
-name: Upload OpenAPI Files on Merge to v10
+name: Upload OpenAPI Files on Merge to v*
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 2 # Makes sure it fetches up to HEADˆ
 
       - name: Get changed OpenAPI files
         id: changed_files
@@ -67,8 +67,8 @@ jobs:
         if: ${{ steps.changed_files.outputs.files != '' }}
         run: |
           # Print out the public URLs for each file
-          AZURE_STORAGE_ACCOUNT="myStorageAccountName"
-          CONTAINER_NAME="public-openapi"
+          AZURE_STORAGE_ACCOUNT="uscoldtestopenapi"
+          CONTAINER_NAME="api-docs"
 
           for file in ${{ steps.changed_files.outputs.files }}; do
             PUBLIC_URL="https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${CONTAINER_NAME}/${file}"
