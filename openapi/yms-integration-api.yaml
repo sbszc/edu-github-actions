@@ -1,0 +1,1048 @@
+openapi: 3.1.1
+info:
+  title: YMS Integration API
+  description: API for integration with Phenix's Yard Management System
+  version: 1.0.0
+  contact:
+    name: USCold
+    url: https://www.uscold.com
+servers:
+  - url: http://localhost:9080/ewm/integration/api/v1/yms
+    description: Local Dev Server
+paths:
+  /receipts:
+    get:
+      tags:
+        - Receipts
+      summary: Get receipt information
+      description: Get receipt information based on the provided parameters
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: date_from
+          in: query
+          description: Lower bound of the date range
+          required: true
+          schema:
+            type: string
+            format: date-time
+            pattern: yyyy-MM-dd'T'HH:mm:ss
+            example: 2024-01-01T00:00:00
+        - name: date_to
+          in: query
+          description: Upper bound of the date range
+          required: true
+          schema:
+            type: string
+            format: date-time
+            pattern: yyyy-MM-dd'T'HH:mm:ss
+            example: 2024-12-31T23:59:59
+        - name: warehouse_id
+          in: query
+          description: Identifier of the warehouse
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234
+        - name: customer_id
+          in: query
+          description: Identifier of the customer
+          schema:
+            type: integer
+            format: int64
+            example: 1234
+        - name: receipt_id
+          in: query
+          description: Identifier of the receipt
+          schema:
+            type: integer
+            format: int64
+            example: 1234
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReceiptsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                examples:
+                  badParameters:
+                    summary: Missing or invalid parameters
+                    description: The details indicate which parameter is missing or invalid
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "Required request parameter 'warehouse_id' for method parameter type Long is not present"
+                  invalidDateRange:
+                    summary: Invalid date range
+                    description: dateFrom must be before dateTo
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "dateFrom must be before dateTo"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /orders:
+    get:
+      tags:
+        - Orders
+      summary: Get order information
+      description: Get order information based on the provided parameters
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: date_from
+          in: query
+          description: Lower bound of the date range
+          required: true
+          schema:
+            type: string
+            format: date-time
+            pattern: yyyy-MM-dd'T'HH:mm:ss
+            example: 2024-01-01T00:00:00
+        - name: date_to
+          in: query
+          description: Upper bound of the date range
+          required: true
+          schema:
+            type: string
+            format: date-time
+            pattern: yyyy-MM-dd'T'HH:mm:ss
+            example: 2024-12-31T23:59:59
+        - name: warehouse_id
+          in: query
+          description: Identifier of the warehouse
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234
+        - name: customer_id
+          in: query
+          description: Identifier of the customer
+          schema:
+            type: integer
+            format: int64
+            example: 1234
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrdersResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                examples:
+                  badParameters:
+                    summary: Missing or invalid parameters
+                    description: The details indicate which parameter is missing or invalid
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "Required request parameter 'warehouse_id' for method parameter type Long is not present"
+                  invalidDateRange:
+                    summary: Invalid date range
+                    description: dateFrom must be before dateTo
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "dateFrom must be before dateTo"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /driver:
+    post:
+      tags:
+        - Drivers
+      summary: Updates or creates driver information
+      description: Updates or creates driver information based on the provided parameters
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDriversRequest'
+        required: true
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                examples:
+                  badParameters:
+                    summary: Missing or invalid parameters
+                    description: The details indicate which parameter is missing or invalid
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "Required request parameter 'warehouse_id' for method parameter type Long is not present"
+                  invalidDateRange:
+                    summary: Invalid date range
+                    description: dateFrom must be before dateTo
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "dateFrom must be before dateTo"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /trailer:
+    post:
+      tags:
+        - Trailers
+      summary: Updates or creates trailer information
+      description: Updates or creates trailer information based on the provided parameters
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostTrailersRequest'
+        required: true
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trailer'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                examples:
+                  badParameters:
+                    summary: Missing or invalid parameters
+                    description: The details indicate which parameter is missing or invalid
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "Required request parameter 'warehouse_id' for method parameter type Long is not present"
+                  invalidDateRange:
+                    summary: Invalid date range
+                    description: dateFrom must be before dateTo
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "dateFrom must be before dateTo"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /appointments:
+    get:
+      tags:
+        - Appointments
+      summary: Get appointment information
+      description: Get appointment information based on the provided parameters
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: date_from
+          in: query
+          description: Lower bound of the date range
+          required: true
+          schema:
+            type: string
+            format: date-time
+            pattern: yyyy-MM-dd'T'HH:mm:ss
+            example: 2024-01-01T00:00:00
+        - name: date_to
+          in: query
+          description: Upper bound of the date range
+          required: true
+          schema:
+            type: string
+            format: date-time
+            pattern: yyyy-MM-dd'T'HH:mm:ss
+            example: 2024-12-31T23:59:59
+        - name: warehouse_id
+          in: query
+          description: Identifier of the warehouse
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1234
+        - name: customer_id
+          in: query
+          description: Identifier of the customer
+          schema:
+            type: integer
+            format: int64
+            example: 1234
+        - name: appointment_number
+          in: query
+          description: Number of the appointment
+          schema:
+            type: integer
+            format: int64
+            example: 1234
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAppointmentsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                examples:
+                  badParameters:
+                    summary: Missing or invalid parameters
+                    description: The details indicate which parameter is missing or invalid
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "Required request parameter 'warehouse_id' for method parameter type Long is not present"
+                  invalidDateRange:
+                    summary: Invalid date range
+                    description: dateFrom must be before dateTo
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "dateFrom must be before dateTo"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Appointments
+      summary: Updates a list of appointments
+      description: Updates a list of appointments based on the provided parameters
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutAppointmentsRequest'
+        required: true
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutAppointmentsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                examples:
+                  badParameters:
+                    summary: Missing or invalid parameters
+                    description: The details indicate which parameter is missing or invalid
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "Required request parameter 'warehouse_id' for method parameter type Long is not present"
+                  invalidDateRange:
+                    summary: Invalid date range
+                    description: dateFrom must be before dateTo
+                    value:
+                      error: "Bad Request"
+                      message: "Missing or Invalid Parameters"
+                      details:
+                        - "dateFrom must be before dateTo"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+      example:
+        error: "Internal Server Error"
+        message: "An unexpected error occurred."
+        details:
+          - "Internal Server Error"
+
+    UnauthorizedResponse:
+      type: string
+      example: "Error 401: Unauthorized"
+
+    GetReceiptsResponse:
+      type: object
+      properties:
+        receipts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Receipt'
+    Receipt:
+      type: object
+      properties:
+        receiptNumberSysId:
+          type: integer
+          format: int64
+        receiptNumber:
+          type: integer
+          format: int64
+        warehouseSysId:
+          type: integer
+          format: int64
+        receiptDate:
+          type: string
+        expectedDelivery:
+          type: string
+        createdDateTime:
+          type: string
+        updatedDateTime:
+          type: string
+        statusSysId:
+          type: integer
+          format: int64
+        status:
+          type: string
+        deliveryMode:
+          type: string
+        scacCode:
+          type: string
+        customerSysId:
+          type: integer
+          format: int64
+        customerNumber:
+          type: integer
+          format: int64
+        customerName:
+          type: string
+        customerOrderNumber:
+          type: string
+        customerReferenceNumber:
+          type: string
+        appointmentSysId:
+          type: integer
+          format: int64
+        appointmentNumber:
+          type: integer
+          format: int64
+        carrierSysId:
+          type: integer
+          format: int64
+        carrierNumber:
+          type: integer
+          format: int64
+        carrierName:
+          type: string
+        trailerNumber:
+          type: integer
+          format: int64
+        receivedFromSysId:
+          type: integer
+          format: int64
+        receivedFrom:
+          type: string
+        receivedQuantity:
+          type: integer
+          format: int64
+        receivedWeight:
+          type: number
+          format: double
+        receiptDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptDetail'
+    ReceiptDetail:
+      type: object
+      properties:
+        receiptDetailSysId:
+          type: integer
+          format: int64
+        lineItemNumber:
+          type: integer
+        createdDateTime:
+          type: string
+        updatedDateTime:
+          type: string
+        productSysId:
+          type: integer
+          format: int64
+        productCode:
+          type: string
+        productDescription:
+          type: string
+        brandCodeSysId:
+          type: integer
+          format: int64
+        brandCode:
+          type: string
+        uscsLotNumber:
+          type: string
+        customerLotNumber:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        codeDate:
+          type: string
+
+    GetOrdersResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+    Order:
+      type: object
+      properties:
+        apptNumber:
+          type: integer
+          format: int64
+        apptSysId:
+          type: integer
+          format: int64
+        carrierName:
+          type: string
+        carrierSysId:
+          type: integer
+          format: int64
+        consigneeAddr1:
+          type: string
+        consigneeAddr2:
+          type: string
+        consigneeAddr3:
+          type: string
+        consigneeAttnTo:
+          type: string
+        consigneeCity:
+          type: string
+        consigneeCountry:
+          type: string
+        consigneeName:
+          type: string
+        consigneeNotes:
+          type: string
+        consigneeState:
+          type: string
+        consigneeSysId:
+          type: integer
+          format: int64
+        consigneeZip:
+          type: string
+        createdDateTime:
+          type: string
+        customerName:
+          type: string
+        customerNumber:
+          type: integer
+          format: int64
+        customerSysId:
+          type: integer
+          format: int64
+        dtNumber:
+          type: integer
+          format: int64
+        dtSysId:
+          type: integer
+          format: int64
+        expectedShipDate:
+          type: string
+        lastUpdatedDateTime:
+          type: string
+        loadNumber:
+          type: string
+        mbolNumber:
+          type: integer
+          format: int64
+        orderDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDetail'
+        orderNotes:
+          type: string
+        orderNumber:
+          type: string
+        orderedQuantity:
+          type: integer
+          format: int64
+        pod:
+          type: string
+        purchaseOrderNumber:
+          type: string
+        referenceNumber:
+          type: string
+        scac:
+          type: string
+        sealNumber:
+          type: array
+          items:
+            type: string
+        shippedGrossWeight:
+          type: number
+          format: double
+        shippedQuantity:
+          type: integer
+          format: int64
+        status:
+          type: string
+        statusSysId:
+          type: integer
+          format: int64
+        ticketType:
+          type: string
+        whseSysId:
+          type: integer
+          format: int64
+    OrderDetail:
+      type: object
+      properties:
+        brandCode:
+          type: string
+        brandCodeSysId:
+          type: integer
+          format: int64
+        codeDate:
+          type: string
+        createdDateTime:
+          type: string
+        customerLotNumber:
+          type: string
+        lastUpdatedDateTime:
+          type: string
+        lineItemNumber:
+          type: integer
+          format: int64
+        orderDetailSysId:
+          type: integer
+          format: int64
+        prodSysId:
+          type: integer
+          format: int64
+        productCode:
+          type: string
+        productDescription:
+          type: string
+        quantityOrdered:
+          type: integer
+          format: int64
+        quantityPicked:
+          type: integer
+          format: int64
+        status:
+          type: string
+        statusSysId:
+          type: integer
+          format: int64
+        uscsLot:
+          type: integer
+          format: int64
+        weightOrdered:
+          type: number
+          format: double
+        weightPicked:
+          type: number
+          format: double
+
+    PostDriversRequest:
+      required:
+        - driver
+      type: object
+      properties:
+        action:
+          type: string
+        driver:
+          $ref: '#/components/schemas/Driver'
+        driverSource:
+          type: string
+        messageId:
+          type: string
+        messageType:
+          type: string
+        remoteId:
+          type: string
+        warehouse:
+          $ref: '#/components/schemas/Warehouse'
+    Driver:
+      required:
+        - driverContactNumber
+      type: object
+      properties:
+        birthDate:
+          pattern: "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+          type: string
+          description: Creation timestamp in ISO 8601 format
+          example: 2024-01-01T00:00:00
+        commentText:
+          maxLength: 256
+          minLength: 0
+          type: string
+        createTimestamp:
+          type: string
+        createUserId:
+          type: string
+        driverContactNumber:
+          pattern: "\\d{10}"
+          type: string
+        driverFirstName:
+          maxLength: 100
+          minLength: 0
+          type: string
+        driverId:
+          type: string
+        driverLastName:
+          maxLength: 100
+          minLength: 0
+          type: string
+        driverNumber:
+          type: integer
+          format: int64
+        emailAddress:
+          pattern: .+@.+\..+
+          type: string
+        issueFlag:
+          type: string
+        statusSystemId:
+          type: string
+        updateTimestamp:
+          type: string
+        updateUserId:
+          type: string
+        vectorDriverId:
+          type: string
+        versionNumber:
+          type: string
+
+    PostTrailersRequest:
+      required:
+        - trailer
+        - warehouse
+      type: object
+      properties:
+        action:
+          type: string
+        driverSource:
+          type: string
+        messageId:
+          type: string
+        messageType:
+          type: string
+        remoteId:
+          type: string
+        trailer:
+          $ref: '#/components/schemas/Trailer'
+        warehouse:
+          $ref: '#/components/schemas/Warehouse'
+    Trailer:
+      type: object
+      properties:
+        carbIDN:
+          pattern: "^[a-zA-Z0-9 ]*$"
+          type: string
+        carrierName:
+          type: string
+        carrierNumber:
+          pattern: ^\d*$
+          type: string
+        commentText:
+          maxLength: 256
+          minLength: 0
+          type: string
+        createTimestamp:
+          type: string
+        createUserID:
+          type: string
+        issueFlag:
+          pattern: "^[YN]$"
+          type: string
+        outOfServiceFlag:
+          pattern: "^[YN]$"
+          type: string
+        trailerLength:
+          pattern: ^\d*$
+          type: string
+        trailerLicense:
+          pattern: "^[a-zA-Z0-9 ]*$"
+          type: string
+        trailerNumber:
+          pattern: "^[a-zA-Z0-9 ]*$"
+          type: string
+        trailerSystemId:
+          type: integer
+          format: int64
+        trailerType:
+          pattern: ^\d*$
+          type: string
+        updateTimestamp:
+          type: string
+        updateUserID:
+          type: string
+        vectorTrailerID:
+          type: string
+
+    Warehouse:
+      required:
+        - warehouseNumber
+      type: object
+      properties:
+        profiles:
+          type: array
+          items:
+            type: string
+        warehouseNumber:
+          type: integer
+          format: int32
+
+    GetAppointmentsResponse:
+      type: object
+      properties:
+        appointments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Appointment'
+    Appointment:
+      type: object
+      properties:
+        I_O_Flag:
+          $ref: '#/components/schemas/Character'
+        actualDoor:
+          type: string
+        actualDoorSysId:
+          type: integer
+          format: int64
+        apptDateTime:
+          type: string
+        apptNotes:
+          type: string
+        apptNum:
+          type: integer
+          format: int64
+        apptRefNum:
+          type: string
+        apptStatus:
+          type: string
+        apptSysId:
+          type: integer
+          format: int64
+        apptTypeDtlCodeDesc:
+          type: string
+        brokerName:
+          type: string
+        brokerNum:
+          type: integer
+          format: int64
+        brokerSysId:
+          type: integer
+          format: int64
+        carScacCode:
+          type: string
+        carrierName:
+          type: string
+        carrierSysId:
+          type: integer
+          format: int64
+        caseQty:
+          type: integer
+          format: int64
+        checkInDateTime:
+          type: string
+        checkOutDateTime:
+          type: string
+        completeDateTime:
+          type: string
+        createdDateTime:
+          type: string
+        custSysId:
+          type: integer
+          format: int64
+        delayReasonCode:
+          type: array
+          items:
+            type: string
+        dockId:
+          type: string
+        dockSysId:
+          type: integer
+          format: int64
+        driverSysId:
+          type: integer
+          format: int64
+        dropLive:
+          type: string
+        gateArrivalDateTime:
+          type: string
+        gateDepartureDateTime:
+          type: string
+        lastUpdatedDateTime:
+          type: string
+        originalApptDateTime:
+          type: string
+        palletQty:
+          type: integer
+          format: int64
+        poolId:
+          type: string
+        shipDate:
+          type: string
+        startDateTime:
+          type: string
+        trailerNum:
+          type: string
+        trailerSysId:
+          type: integer
+          format: int64
+        whseSysId:
+          type: integer
+          format: int64
+    Character:
+      title: Character
+      type: object
+
+    PutAppointmentsRequest:
+      required:
+        - action
+        - appointments
+        - messageId
+        - messageType
+      type: object
+      properties:
+        action:
+          pattern: Update
+          type: string
+        appointments:
+          type: array
+          items:
+            $ref: '#/components/schemas/PutAppointment'
+        messageId:
+          type: string
+        messageType:
+          pattern: APPOINTMENT
+          type: string
+    PutAppointmentsResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/PutAppointment'
+    PutAppointment:
+      required:
+        - appointmentETADateTime
+        - appointmentPreCheckDateTime
+      type: object
+      properties:
+        appointmentETADateTime:
+          pattern: "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+          type: string
+        appointmentNumber:
+          pattern: ^\d*$
+          type: string
+        appointmentPreCheckDateTime:
+          pattern: "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+          type: string
+        appointmentSystemId:
+          pattern: ^\d*$
+          type: string
+        warehouseNumber:
+          pattern: ^\d*$
+          type: string
+        warehouseSystemId:
+          pattern: ^\d*$
+          type: string
